@@ -1,29 +1,21 @@
-import sys, os, py_compile, subprocess, time, pickle, imp
+# first lines, just to get sure no previous variable is still there
+# (happens in ipython, if scripts are run sequentially)
+#import sys
+#_modules = sys.modules[__name__]
+#_keep = ['In', 'Out', 'exit', 'get_ipython', 'quit']
+#for n in dir():
+#    if not n[0]=='_' and not n in _keep:
+#        delattr(_modules, n)
 
-
-def compile_and_execute():
-    name = sys.argv[0].split('/')[-1]
-    extension = name.split('.')[1]
-    if extension == 'py':
-        print('Compiling ' + name)
-        py_compile.compile(name)
-        pycname = name.split('.')[0] + '.pyc'
-        print('Executing ' + pycname)
-        subprocess.call(['python', pycname])
-        time.sleep(0.1)
-        # print('Removing ' + pycname)
-        # os.remove(pycname)
-        quit()
-
-
-compile_and_execute()
-
+#actual script beginning
+import sys, os, time, pickle, imp
 import pygame, math, random, copy, gc
 
 pygame.init()
 
 # CONSTANTS
-LIBRARY_VERSION = 3.0
+__version__ = '4.0.3'
+LIBRARY_VERSION = '4.0.3'
 
 # Colors
 BLACK = [0, 0, 0]
@@ -253,8 +245,8 @@ def screen(w, h, fullscreen=False):
     # Create surface for turtle drawings
     create_pen_surface()
     # Get screen center
-    CENTER.x = screen_info.resolution[0] / 2
-    CENTER.y = screen_info.resolution[1] / 2
+    CENTER.x = screen_info.resolution[0] // 2
+    CENTER.y = screen_info.resolution[1] // 2
 
 
 def SCREEN(*args):
@@ -501,35 +493,35 @@ class Camera:
                     # self.old_x = target.x
                     # self.old_y = target.y
                     if self.hor_position == 'left':
-                        if target.x >= screen_info.resolution[0]/2:
+                        if target.x >= screen_info.resolution[0]//2:
                             self.on_the_edge = False
-                            dx = target.x - screen_info.resolution[0]/2
-                            target.setx(screen_info.resolution[0]/2)
+                            dx = target.x - screen_info.resolution[0]//2
+                            target.setx(screen_info.resolution[0]//2)
                             for a in self.others:
                                 a.setx(a.x - dx)
                     elif self.hor_position == 'right':
-                        if target.x <= screen_info.resolution[0]/2:
+                        if target.x <= screen_info.resolution[0]//2:
                             self.on_the_edge = False
-                            dx = target.x - screen_info.resolution[0]/2
-                            target.setx(screen_info.resolution[0]/2)
+                            dx = target.x - screen_info.resolution[0]//2
+                            target.setx(screen_info.resolution[0]//2)
                             for a in self.others:
                                 a.setx(a.x - dx)
                     if self.ver_position == 'up':
-                        if target.y >= screen_info.resolution[1]/2:
+                        if target.y >= screen_info.resolution[1]//2:
                             self.on_the_edge = False
-                            dy = target.y - screen_info.resolution[1]/2
-                            target.setx(screen_info.resolution[1]/2)
+                            dy = target.y - screen_info.resolution[1]//2
+                            target.setx(screen_info.resolution[1]//2)
                             for a in self.others:
                                 a.sety(a.y - dy)
                     elif self.ver_position == 'down':
-                        if target.y <= screen_info.resolution[1]/2:
+                        if target.y <= screen_info.resolution[1]//2:
                             self.on_the_edge = False
-                            dy = target.y - screen_info.resolution[1]/2
-                            target.setx(screen_info.resolution[1]/2)
+                            dy = target.y - screen_info.resolution[1]//2
+                            target.setx(screen_info.resolution[1]//2)
                             for a in self.others:
                                 a.sety(a.y - dy)
                 else:
-                    if not 0 < ground.x < ground.width/2:
+                    if not 0 < ground.x < ground.width//2:
                         self.on_the_edge = True
                         if 225 < target.direction < 315:
                             self.hor_position = 'left'
@@ -538,7 +530,7 @@ class Camera:
                     else:
                         self.hor_position = None
                         self.scroll_x(target)
-                    if not 0 < ground.y < ground.height/2:
+                    if not 0 < ground.y < ground.height//2:
                         if 315 < target.direction <= 360 or 0 <= target.direction < 45:
                             self.ver_position = 'up'
                         elif 135 < target.direction < 225:
@@ -684,9 +676,11 @@ def terminate():
     if False:
         subprocess.Popen(['python', '/home/pi/PYGB/main.py'], cwd='/home/pi/')
     # QUIT
+    pygame.display.quit()
     pygame.quit()
     sys.exit()
     quit()
+    quit
 
 
 # One of the most important functions
@@ -813,9 +807,9 @@ class Actor(pygame.sprite.Sprite):
         ACTORS.add(self)
         # Actor coordinates
         self.x = 0.0
-        self.x = screen_info.resolution[0] / 2
+        self.x = screen_info.resolution[0] // 2
         self.y = 0.0
-        self.y = screen_info.resolution[1] / 2
+        self.y = screen_info.resolution[1] // 2
         # Actor angle direction
         self.direction = 90
         # image orientation
@@ -989,7 +983,7 @@ class Actor(pygame.sprite.Sprite):
 
     def play(self, animation, fps=15, loop=True, interval=1):
         anim = self.animations[animation]
-        pause = 1000 / fps
+        pause = 1000 // fps
         if self.animation['name'] != animation:
             self.animation['name'] = animation
             self.animation['state'] = 'playing'
@@ -1035,7 +1029,7 @@ class Actor(pygame.sprite.Sprite):
         return self.y
 
     def setdirection(self, angle):
-        self.direction = angle
+        self.direction = int(angle)
         self.transform_rotate_image()
 
     def getdirection(self):
@@ -1259,8 +1253,8 @@ class Actor(pygame.sprite.Sprite):
         # if not self.need_to_stamp:
         #     self.need_to_stamp = True
         screen_info.pen_surface.blit(self.image,
-                                     ((self.x - self.width / 2),
-                                      (self.y - self.height / 2)),
+                                     ((self.x - self.width // 2),
+                                      (self.y - self.height // 2)),
                                      None)
 
     # @pausable
@@ -1273,25 +1267,25 @@ class Actor(pygame.sprite.Sprite):
         # point at coordinate
         elif type(target) is list and type(target) is not str:
             angle = -math.atan2(self.x - target[0], self.y - target[1])
-            angle = angle * (180 / math.pi)
+            angle = angle * (180 // math.pi)
             self.direction = angle
             self.heading = angle - 90
         elif y is not None:
             angle = -math.atan2(self.x - target, self.y - y)
-            angle = angle * (180 / math.pi)
+            angle = angle * (180 // math.pi)
             self.direction = angle
             self.heading = angle - 90
         # point at mouse pointer
         elif target == 'mouse':
             mousepos = pygame.mouse.get_pos()
             angle = -math.atan2(self.x - mousepos[0], self.y - mousepos[1])
-            angle = angle * (180 / math.pi)
+            angle = angle * (180 // math.pi)
             self.direction = angle
             self.heading = angle - 90
         # point at target
         else:
             angle = -math.atan2(self.x - target.x, self.y - target.y)
-            angle = angle * (180 / math.pi)
+            angle = angle * (180 // math.pi)
             self.direction = angle
             self.heading = angle - 90
         self.transform_rotate_image()
@@ -1578,7 +1572,7 @@ class Sound(pygame.mixer.Sound):
 
     def setvolume(self, volume):
         self.volume = volume
-        v = volume / 100.0
+        v = volume // 100.0
         self.set_volume(v)
 
     def volumeup(self, value):
@@ -1787,11 +1781,11 @@ def trigger(hand, pad=0):
     if gamepad_manager.gamepad_count > 0:
         if hand == 'left':
             raw = gamepad_manager.gamepads[pad].get_axis(2)
-            value = (raw + 1) / 2
+            value = (raw + 1) // 2
             return value
         if hand == 'right':
             raw = gamepad_manager.gamepads[pad].get_axis(5)
-            value = (raw + 1) / 2
+            value = (raw + 1) // 2
             return value
     elif not gamepad_manager.no_gamepad_found:
         print('no gamepad found...')
