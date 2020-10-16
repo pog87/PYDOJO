@@ -1,4 +1,4 @@
-from pydojo import *
+from pydojo4 import *
 
 screen(1280, 720)
 fill(WHITE)

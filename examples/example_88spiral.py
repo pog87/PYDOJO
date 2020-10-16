@@ -1,4 +1,4 @@
-from pydojo import *
+from pydojo4 import *
 
 # CREATE GAME DISPLAY
 screen(1920, 1080)

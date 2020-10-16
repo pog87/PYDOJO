@@ -1,4 +1,4 @@
-from pydojo4 import *
+from pydojo import *
 
 
 def terminate():

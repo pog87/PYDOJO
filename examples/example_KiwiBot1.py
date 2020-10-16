@@ -1,4 +1,4 @@
-from pydojo import *
+from pydojo4 import *
 from pyfirmata import *
 
 # inizializzo

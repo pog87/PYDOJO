@@ -1,4 +1,4 @@
-from pydojo import *
+from pydojo4 import *
 from actors.gobo import *
 from actors.pyco import *
 from actors.arrow import *
